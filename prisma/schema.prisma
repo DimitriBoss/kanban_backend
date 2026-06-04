@@ -1,0 +1,75 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+model User {
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+
+  boards       Board[]
+  boardMembers BoardMember[]
+  tasks        Task[]
+}
+
+model Board {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  createdAt   DateTime @default(now())
+
+  ownerId  String
+  owner    User    @relation(fields: [ownerId], references: [id])
+
+  columns  Column[]
+  members  BoardMember[]
+}
+
+model BoardMember {
+  boardId String
+  userId  String
+  role    String @default("member")
+
+  board Board @relation(fields: [boardId], references: [id])
+  user  User  @relation(fields: [userId], references: [id])
+
+  @@id([boardId, userId])
+}
+
+model Column {
+  id       String @id @default(uuid())
+  title    String
+  position Int
+
+  boardId String
+  board   Board  @relation(fields: [boardId], references: [id])
+
+  tasks Task[]
+}
+
+model Task {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  position    Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  columnId  String
+  column    Column @relation(fields: [columnId], references: [id])
+
+  creatorId String
+  creator   User   @relation(fields: [creatorId], references: [id])
+}
