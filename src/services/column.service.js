@@ -50,6 +50,14 @@ export const deleteColumnService = async (columnId, userId) => {
   if (column.board.ownerId !== userId) {
     throw new Error("Vous n'etes pas le proprietaire de ce column");
   }
+
+  // Supprimer d'abord toutes les tâches de la colonne (suppression en cascade manuelle)
+  await prisma.task.deleteMany({
+    where: {
+      columnId: columnId,
+    },
+  });
+
   return await prisma.column.delete({
     where: {
       id: columnId,
