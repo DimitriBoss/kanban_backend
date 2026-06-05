@@ -84,3 +84,75 @@ export const moveTaskService = async ({
     },
   });
 };
+
+export const deleteTaskService = async ({ taskId, boardId, userId }) => {
+  const task = await prisma.task.findUnique({
+    where: {
+      id: taskId,
+    },
+    include: {
+      column: {
+        include: {
+          board: true,
+        },
+      },
+    },
+  });
+
+  if (!task) {
+    throw new Error("Tâche introuvable");
+  }
+
+  if (task.column.boardId !== boardId) {
+    throw new Error("Cette tâche n'appartient pas à ce tableau");
+  }
+
+  if (task.column.board.ownerId !== userId) {
+    throw new Error("Vous n'etes pas autorisé à supprimer cette tâche");
+  }
+
+  return await prisma.task.delete({
+    where: {
+      id: taskId,
+    },
+  });
+};
+
+export const updateTaskTitleService = async ({ taskId, boardId, title, description, userId }) => {
+  const task = await prisma.task.findUnique({
+    where: {
+      id: taskId,
+    },
+    include: {
+      column: {
+        include: {
+          board: true,
+        },
+      },
+    },
+  });
+
+  if (!task) {
+    throw new Error("Tâche introuvable");
+  }
+
+  if (task.column.boardId !== boardId) {
+    throw new Error("Cette tâche n'appartient pas à ce tableau");
+  }
+
+  if (task.column.board.ownerId !== userId) {
+    throw new Error("Vous n'etes pas autorisé à modifier cette tâche");
+  }
+
+  const updateData = {};
+  if (title !== undefined) updateData.title = title;
+  if (description !== undefined) updateData.description = description;
+
+  return await prisma.task.update({
+    where: {
+      id: taskId,
+    },
+    data: updateData,
+  });
+};
+

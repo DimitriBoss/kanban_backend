@@ -2,6 +2,7 @@ import {
   createBoardService,
   deleteBoardService,
   getAllBoardsService,
+  getBoardByIdService,
 } from "../services/board.service.js";
 
 export const createBoardController = async (req, res) => {
@@ -35,3 +36,15 @@ export const deleteBoardController = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
+
+export const getBoardByIdController = async (req, res) => {
+  try {
+    const { boardId } = req.params;
+    const userId = req.userId;
+    const board = await getBoardByIdService(boardId, userId);
+    res.status(200).json(board);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+

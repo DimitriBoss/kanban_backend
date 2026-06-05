@@ -36,3 +36,19 @@ export const deleteBoardService = async (boardId, userId) => {
     },
   });
 };
+
+export const getBoardByIdService = async (boardId, userId) => {
+  const board = await prisma.board.findUnique({
+    where: {
+      id: boardId,
+    },
+  });
+  if (!board) {
+    throw new Error("Board introuvable");
+  }
+  if (board.ownerId !== userId) {
+    throw new Error("Vous n'etes pas le proprietaire de ce board");
+  }
+  return board;
+};
+
