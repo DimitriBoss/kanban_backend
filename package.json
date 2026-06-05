@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon src/index.js",
-    "start": "npx prisma migrate deploy --schema=./prisma/schema.prisma && node src/index.js"
+    "start": "npx prisma generate --schema=./prisma/schema.prisma && npx prisma migrate deploy --schema=./prisma/schema.prisma && node src/index.js",
+    "postinstall": "prisma generate --schema=./prisma/schema.prisma"
   },
   "keywords": [],
   "author": "",
