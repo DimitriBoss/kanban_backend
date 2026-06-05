@@ -8,7 +8,12 @@ import taskRoute from "./routes/task.route.js";
 const app = express();
 
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: ["https://kanban-two-eta.vercel.app"],
+    credentials: true,
+  }),
+);
 
 app.get("/", (req, res) => {
   res.send("Hello from kanban");
