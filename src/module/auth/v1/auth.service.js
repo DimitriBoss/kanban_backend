@@ -1,8 +1,8 @@
-import prisma from "../utils/prisma.js";
-import { generateToken } from "../utils/jwt.js";
+import prisma from "../../../utils/prisma.js";
+import { generateToken } from "../../../utils/jwt.js";
 import bcrypt from "bcrypt";
 
-export const registerService = async ({ name, email, password }) => {
+export const registerV1Service = async ({ name, email, password }) => {
   const userExist = await prisma.user.findUnique({
     where: { email },
   });
@@ -29,7 +29,7 @@ export const registerService = async ({ name, email, password }) => {
   };
 };
 
-export const loginService = async ({ email, password }) => {
+export const loginV1Service = async ({ email, password }) => {
   const userExist = await prisma.user.findUnique({
     where: { email },
   });
