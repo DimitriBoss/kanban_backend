@@ -1,47 +1,47 @@
 import {
-  createBoardService,
-  deleteBoardService,
-  getAllBoardsService,
-  getBoardByIdService,
-} from "../services/board.service.js";
+  createBoardV1Service,
+  deleteBoardV1Service,
+  getAllBoardsV1Service,
+  getBoardByIdV1Service,
+} from "./board.service.js";
 
-export const createBoardController = async (req, res) => {
+export const createBoardV1Controller = async (req, res) => {
   try {
     const { title, description } = req.body;
     const ownerId = req.userId;
-    const board = await createBoardService({ title, description, ownerId });
+    const board = await createBoardV1Service({ title, description, ownerId });
     res.status(201).json(board);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 };
 
-export const getAllBoardsController = async (req, res) => {
+export const getAllBoardsV1Controller = async (req, res) => {
   try {
     const userId = req.userId;
-    const boards = await getAllBoardsService(userId);
+    const boards = await getAllBoardsV1Service(userId);
     res.status(200).json(boards);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 };
 
-export const deleteBoardController = async (req, res) => {
+export const deleteBoardV1Controller = async (req, res) => {
   try {
     const { boardId } = req.params;
     const userId = req.userId;
-    const board = await deleteBoardService(boardId, userId);
+    const board = await deleteBoardV1Service(boardId, userId);
     res.status(200).json(board);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 };
 
-export const getBoardByIdController = async (req, res) => {
+export const getBoardByIdV1Controller = async (req, res) => {
   try {
     const { boardId } = req.params;
     const userId = req.userId;
-    const board = await getBoardByIdService(boardId, userId);
+    const board = await getBoardByIdV1Service(boardId, userId);
     res.status(200).json(board);
   } catch (error) {
     res.status(400).json({ message: error.message });

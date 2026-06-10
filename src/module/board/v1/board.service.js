@@ -1,16 +1,26 @@
-import prisma from "../utils/prisma.js";
+import prisma from "../../../utils/prisma.js";
 
-export const createBoardService = async ({ title, description, ownerId }) => {
+export const createBoardV1Service = async ({ title, description, ownerId }) => {
   return await prisma.board.create({
     data: {
       title,
       description,
       ownerId,
+      columns: {
+        create: [
+          { title: "A faire", positionV1: 1 },
+          { title: "En cours", positionV1: 2 },
+          { title: "Terminé", positionV1: 3 },
+        ],
+      },
+    },
+    include: {
+      columns: true,
     },
   });
 };
 
-export const getAllBoardsService = async (userId) => {
+export const getAllBoardsV1Service = async (userId) => {
   return await prisma.board.findMany({
     where: {
       ownerId: userId,
@@ -18,7 +28,7 @@ export const getAllBoardsService = async (userId) => {
   });
 };
 
-export const deleteBoardService = async (boardId, userId) => {
+export const deleteBoardV1Service = async (boardId, userId) => {
   const board = await prisma.board.findUnique({
     where: {
       id: boardId,
@@ -37,7 +47,7 @@ export const deleteBoardService = async (boardId, userId) => {
   });
 };
 
-export const getBoardByIdService = async (boardId, userId) => {
+export const getBoardByIdV1Service = async (boardId, userId) => {
   const board = await prisma.board.findUnique({
     where: {
       id: boardId,
@@ -51,4 +61,3 @@ export const getBoardByIdService = async (boardId, userId) => {
   }
   return board;
 };
-

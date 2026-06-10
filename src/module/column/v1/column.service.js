@@ -1,6 +1,6 @@
-import prisma from "../utils/prisma.js";
+import prisma from "../../../utils/prisma.js";
 
-export const createColumnService = async ({ title, boardId, userId }) => {
+export const createColumnV1Service = async ({ title, boardId, userId }) => {
   const board = await prisma.board.findUnique({
     where: {
       id: boardId,
@@ -21,23 +21,23 @@ export const createColumnService = async ({ title, boardId, userId }) => {
     data: {
       title,
       boardId,
-      position: lastColomn,
+      positionV1: lastColomn,
     },
   });
 };
 
-export const getColumnByBoardService = async (boardId) => {
+export const getColumnByBoardV1Service = async (boardId) => {
   return await prisma.column.findMany({
     where: {
       boardId,
     },
     orderBy: {
-      position: "asc",
+      positionV1: "asc",
     },
   });
 };
 
-export const deleteColumnService = async (columnId, userId) => {
+export const deleteColumnV1Service = async (columnId, userId) => {
   const column = await prisma.column.findUnique({
     where: {
       id: columnId,
