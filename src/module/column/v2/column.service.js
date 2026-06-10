@@ -5,6 +5,7 @@ import { generateKeyBetween } from "fractional-indexing";
 export const createColumnV2Service = async ({
   title,
   boardId,
+  color,
   allowDuplicate = false,
 }) => {
   // 1. Gestion des doublons de nom (Règle métier)
@@ -41,7 +42,7 @@ export const createColumnV2Service = async ({
 
   // 3. Création en base de données
   const newColumn = await prisma.column.create({
-    data: { title, boardId, positionV2: position },
+    data: { title, boardId, color, positionV2: position },
   });
 
   return { status: "SUCCESS", column: newColumn };
@@ -114,6 +115,7 @@ export const updateColumnV2Service = async ({
   boardId,
   columnId,
   title,
+  color,
   positionBefore, // String ou null
   positionAfter,  // String ou null
   userId,
@@ -132,6 +134,10 @@ export const updateColumnV2Service = async ({
   }
 
   const updateData = {};
+
+  if (color !== undefined) {
+    updateData.color = color;
+  }
 
   // 2. Gestion du Titre & Doublons
   if (title !== undefined) {

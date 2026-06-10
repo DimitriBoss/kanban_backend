@@ -1,7 +1,22 @@
 import prisma from "../../../utils/prisma.js";
 
-export const createBoardV1Service = async ({ title, description, ownerId }) => {
-  return await prisma.board.create({
+export const createBoardV1Service = async ({ title, description, ownerId, allowDuplicate = false }) => {
+  if (!allowDuplicate) {
+    const existingBoard = await prisma.board.findFirst({
+      where: { title, ownerId },
+    });
+
+    if (existingBoard) {
+      return {
+        status: "EXIST",
+        message: "Un projet avec ce nom existe déjà.",
+        action: { typeA: "RENAME", typeB: "DUPLICATE" },
+        board: existingBoard,
+      };
+    }
+  }
+
+  const newboard = await prisma.board.create({
     data: {
       title,
       description,
@@ -18,6 +33,11 @@ export const createBoardV1Service = async ({ title, description, ownerId }) => {
       columns: true,
     },
   });
+
+  return {
+    status: "SUCCESS",
+    board: newboard,
+  };
 };
 
 export const getAllBoardsV1Service = async (userId) => {
@@ -60,4 +80,56 @@ export const getBoardByIdV1Service = async (boardId, userId) => {
     throw new Error("Vous n'etes pas le proprietaire de ce board");
   }
   return board;
+};
+
+export const updateBoardV1Service = async (boardId, userId, updatedField, allowDuplicate = false) => {
+  const existingBoard = await prisma.board.findFirst({
+    where: {
+      id: boardId,
+      ownerId: userId,
+    },
+  });
+
+  if (!existingBoard) {
+    throw new Error("Board introuvable ou accès refusé.");
+  }
+
+  const { title, description } = updatedField;
+
+  // Si le titre change et qu'on ne force pas la duplication, on vérifie l'existence
+  if (title && title !== existingBoard.title && !allowDuplicate) {
+    const duplicateBoard = await prisma.board.findFirst({
+      where: {
+        title,
+        ownerId: userId,
+        NOT: {
+          id: boardId,
+        },
+      },
+    });
+
+    if (duplicateBoard) {
+      return {
+        status: "EXIST",
+        message: "Un projet avec ce nom existe déjà.",
+        action: { typeA: "RENAME", typeB: "DUPLICATE" },
+        board: duplicateBoard,
+      };
+    }
+  }
+
+  const updated = await prisma.board.update({
+    where: {
+      id: boardId,
+    },
+    data: {
+      title,
+      description,
+    },
+  });
+
+  return {
+    status: "SUCCESS",
+    board: updated,
+  };
 };

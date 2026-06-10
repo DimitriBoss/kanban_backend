@@ -6,7 +6,7 @@ import {
 } from "./column.service.js";
 
 export const createColumnV2Controller = async (req, res) => {
-  const { title, allowDuplicate } = req.body;
+  const { title, color, allowDuplicate } = req.body;
   const { boardId } = req.params;
 
   if (!title) {
@@ -27,6 +27,7 @@ export const createColumnV2Controller = async (req, res) => {
     const result = await createColumnV2Service({
       title,
       boardId,
+      color,
       allowDuplicate,
     });
 
@@ -135,7 +136,7 @@ export const deleteColumnV2Controller = async (req, res) => {
 
 export const updateColumnV2Controller = async (req, res) => {
   const { boardId, columnId } = req.params;
-  const { title, positionBefore, positionAfter, allowDuplicate } = req.body;
+  const { title, color, positionBefore, positionAfter, allowDuplicate } = req.body;
   const userId = req.userId;
 
   if (!boardId) {
@@ -157,6 +158,7 @@ export const updateColumnV2Controller = async (req, res) => {
       boardId,
       columnId,
       title,
+      color,
       positionBefore,
       positionAfter,
       userId,

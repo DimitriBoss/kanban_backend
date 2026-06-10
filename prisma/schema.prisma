@@ -53,6 +53,7 @@ model BoardMember {
 model Column {
   id         String  @id @default(uuid())
   title      String
+  color      String?
   
   // ─── VERSIONNING DES POSITIONS ───
   positionV1 Int?    // 100% Corrigé : Type Int pour ton ancienne logique (1, 2, 3...)
