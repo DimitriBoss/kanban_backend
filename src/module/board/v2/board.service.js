@@ -32,19 +32,14 @@ export const createBoardV2Service = async ({
       ownerId,
       columns: {
         create: (() => {
-          // Ancienne approche (float manuel) :
-          // { title: "A faire",  position: 1.0 },
-          // { title: "En cours", position: 2.0 },
-          // { title: "Terminé",  position: 3.0 },
-
           // Nouvelle approche via bibliothèque :
           // generateNKeysBetween(null, null, 3) génère 3 clés propres entre null et null
           // Ex: ["a0", "a1", "a2"]
           const [k1, k2, k3] = generateNKeysBetween(null, null, 3);
           return [
-            { title: "A faire", positionV2: k1 },
-            { title: "En cours", positionV2: k2 },
-            { title: "Terminé", positionV2: k3 },
+            { title: "À faire", positionV2: k1, category: "TO_DO", color: "indigo" },
+            { title: "En cours", positionV2: k2, category: "IN_PROGRESS", color: "amber" },
+            { title: "Terminé", positionV2: k3, category: "DONE", color: "emerald" },
           ];
         })(),
       },

@@ -120,6 +120,13 @@ export const deleteColumnV2Controller = async (req, res) => {
       });
     }
 
+    if (result.status === "FORBIDDEN") {
+      return res.status(400).json({
+        status: 400,
+        message: result.message,
+      });
+    }
+
     if (result.status === "NOT_FOUND") {
       return res.status(404).json({
         status: 404,
@@ -136,7 +143,7 @@ export const deleteColumnV2Controller = async (req, res) => {
 
 export const updateColumnV2Controller = async (req, res) => {
   const { boardId, columnId } = req.params;
-  const { title, color, positionBefore, positionAfter, allowDuplicate } = req.body;
+  const { title, color, positionBefore, positionAfter, category, allowDuplicate } = req.body;
   const userId = req.userId;
 
   if (!boardId) {
@@ -161,6 +168,7 @@ export const updateColumnV2Controller = async (req, res) => {
       color,
       positionBefore,
       positionAfter,
+      category,
       userId,
       allowDuplicate,
     });
@@ -170,6 +178,13 @@ export const updateColumnV2Controller = async (req, res) => {
         status: 200,
         message: "Colonne mise à jour avec succès.",
         column: result.column,
+      });
+    }
+
+    if (result.status === "FORBIDDEN") {
+      return res.status(400).json({
+        status: 400,
+        message: result.message,
       });
     }
 

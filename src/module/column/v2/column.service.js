@@ -102,6 +102,26 @@ export const deleteColumnV2Service = async (boardId, columnId, userId) => {
     return { status: "NOT_FOUND", message: "La colonne n'a pas été trouvée." };
   }
 
+  // Règle métier : interdire strictement la suppression d'une colonne si sa catégorie est DONE
+  if (existingColumn.category === "DONE") {
+    return {
+      status: "FORBIDDEN",
+      message: "La suppression d'une colonne de catégorie 'DONE' est strictement interdite.",
+    };
+  }
+
+  // Règle métier supplémentaire : S'assurer qu'il reste toujours au moins une colonne
+  const columnCount = await prisma.column.count({
+    where: { boardId },
+  });
+
+  if (columnCount <= 1) {
+    return {
+      status: "FORBIDDEN",
+      message: "Impossible de supprimer la dernière colonne du tableau.",
+    };
+  }
+
   // 3. Suppression
   const deletedColumn = await prisma.column.delete({
     where: { id: columnId },
@@ -118,6 +138,7 @@ export const updateColumnV2Service = async ({
   color,
   positionBefore, // String ou null
   positionAfter,  // String ou null
+  category,       // ColumnCategory
   userId,
   allowDuplicate = false,
 }) => {
@@ -133,13 +154,25 @@ export const updateColumnV2Service = async ({
     };
   }
 
+  // 2. Vérification de l'existence de la colonne
+  const existingColumn = await prisma.column.findFirst({
+    where: { id: columnId, boardId },
+  });
+
+  if (!existingColumn) {
+    return {
+      status: "NOT_FOUND",
+      message: "La colonne n'a pas été trouvée.",
+    };
+  }
+
   const updateData = {};
 
   if (color !== undefined) {
     updateData.color = color;
   }
 
-  // 2. Gestion du Titre & Doublons
+  // 3. Gestion du Titre & Doublons
   if (title !== undefined) {
     if (!allowDuplicate) {
       const duplicateColumn = await prisma.column.findFirst({
@@ -158,7 +191,18 @@ export const updateColumnV2Service = async ({
     updateData.title = title;
   }
 
-  // 3. Gestion du Drag & Drop
+  // 4. Gestion de la Catégorie
+  if (category !== undefined && category !== existingColumn.category) {
+    if (existingColumn.category === "DONE" || category === "DONE") {
+      return {
+        status: "FORBIDDEN",
+        message: "Impossible de modifier la catégorie de cette colonne vers ou depuis la catégorie 'DONE'.",
+      };
+    }
+    updateData.category = category;
+  }
+
+  // 5. Gestion du Drag & Drop
   const isMoving = positionBefore !== undefined || positionAfter !== undefined;
 
   if (isMoving) {
@@ -170,7 +214,7 @@ export const updateColumnV2Service = async ({
     updateData.positionV2 = newPosition;
   }
 
-  // 4. On applique les changements
+  // 6. On applique les changements
   const updatedColumn = await prisma.column.update({
     where: { id: columnId },
     data: updateData,

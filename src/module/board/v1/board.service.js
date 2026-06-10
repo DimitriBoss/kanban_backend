@@ -23,9 +23,9 @@ export const createBoardV1Service = async ({ title, description, ownerId, allowD
       ownerId,
       columns: {
         create: [
-          { title: "A faire", positionV1: 1 },
-          { title: "En cours", positionV1: 2 },
-          { title: "Terminé", positionV1: 3 },
+          { title: "À faire", positionV1: 1, category: "TO_DO", color: "indigo" },
+          { title: "En cours", positionV1: 2, category: "IN_PROGRESS", color: "amber" },
+          { title: "Terminé", positionV1: 3, category: "DONE", color: "emerald" },
         ],
       },
     },
