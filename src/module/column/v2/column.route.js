@@ -5,7 +5,7 @@ import {
   deleteColumnV2Controller,
   updateColumnV2Controller,
 } from "./column.controller.js";
-import { authMiddleware } from "../../../middleware/auth.middleware.v2.js";
+import { authMiddleware } from "../../../middleware/auth.middleware.js";
 
 const router = express.Router({ mergeParams: true });
 

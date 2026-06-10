@@ -5,7 +5,7 @@ import {
   getTasksByColumnIdV2Controller,
   updateTaskV2Controller,
 } from "./task.controller.js";
-import { authMiddleware } from "../../../middleware/auth.middleware.v2.js";
+import { authMiddleware } from "../../../middleware/auth.middleware.js";
 
 const router = express.Router({ mergeParams: true });
 

@@ -1,5 +1,5 @@
 import express from "express";
-import { authMiddleware } from "../../../middleware/auth.middleware.v2.js";
+import { authMiddleware } from "../../../middleware/auth.middleware.js";
 import {
   createBoardV2Controller,
   getAllBoardsV2Controller,
