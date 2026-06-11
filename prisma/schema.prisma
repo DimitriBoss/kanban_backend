@@ -37,6 +37,8 @@ model Board {
 
   columns  Column[]
   members  BoardMember[]
+
+  @@index([ownerId])
 }
 
 model BoardMember {
@@ -64,6 +66,8 @@ model Column {
   board      Board   @relation(fields: [boardId], references: [id], onDelete: Cascade)
 
   tasks      Task[]
+
+  @@index([boardId])
 }
 
 model Task {
@@ -83,6 +87,9 @@ model Task {
 
   creatorId   String
   creator     User     @relation(fields: [creatorId], references: [id])
+
+  @@index([columnId])
+  @@index([creatorId])
 }
 
 enum ColumnCategory {
