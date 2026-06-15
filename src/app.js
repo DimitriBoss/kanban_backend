@@ -8,7 +8,7 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: ["https://kanban-two-eta.vercel.app"],
+    origin: ["https://kanban-two-eta.vercel.app", "http://localhost:5173"],
     credentials: true,
   }),
 );
